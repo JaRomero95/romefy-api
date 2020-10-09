@@ -1,0 +1,49 @@
+name: Health
+
+on:
+  push:
+    branches: [ master, dev ]
+  pull_request:
+    branches: [ master, dev ]
+
+jobs:
+  test:
+
+    runs-on: ubuntu-latest
+    
+    services:
+      db:
+        image: postgres:12.2
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: 'foobarfoo'
+          POSTGRES_DB: 'api_test'
+          POSTGRES_HOST_AUTH_METHOD: trust
+
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 2.7.2
+
+    - name: Install dependencies
+      run: bundle install
+
+    - name: Run tests
+      env:
+        DATABASE_URL: postgres://postgres:@localhost:5432/api_test
+        RAILS_ENV: test
+      run: |
+        gem install bundler --no-document
+        bundle install --quiet
+        bundle exec rails db:test:prepare
+        bundle exec rspec
