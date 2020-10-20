@@ -3,9 +3,11 @@ class MultimediaFilesController < ApplicationController
 
   # GET /multimedia_files
   def index
-    @multimedia_files = MultimediaFile.all
+    @multimedia_files = MultimediaFile.with_attached_file.all
 
-    render json: @multimedia_files
+    render json: @multimedia_files.as_json(
+      methods: %i[file_url]
+    )
   end
 
   # GET /multimedia_files/1
@@ -47,6 +49,6 @@ class MultimediaFilesController < ApplicationController
 
   # Only allow a trusted parameter "white list" through.
   def multimedia_file_params
-    params.require(:multimedia_file).permit(:name)
+    params.require(:multimedia_file).permit(:name, :file)
   end
 end
