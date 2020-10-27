@@ -15,3 +15,5 @@ Style/Documentation:
   Enabled: false
 Layout/SpaceInsideHashLiteralBraces:
   EnforcedStyle: no_space
+Metrics/MethodLength:
+  CountAsOne: ['array', 'heredoc']

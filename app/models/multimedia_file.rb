@@ -3,7 +3,7 @@ class MultimediaFile < ApplicationRecord
 
   has_one_attached :file
 
-  validates :name, presence: true
+  validates :title, presence: true
   validates :file, presence: true
 
   def file_url
